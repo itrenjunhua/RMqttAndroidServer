@@ -1,2 +1,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.renj.rqottlibrary" />
+    package="com.renj.rqottlibrary">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application android:label="@string/app_name">
+
+        <!-- Mqtt Service -->
+        <service android:name="org.eclipse.paho.android.service.MqttService"></service>
+    </application>
+
+</manifest>
