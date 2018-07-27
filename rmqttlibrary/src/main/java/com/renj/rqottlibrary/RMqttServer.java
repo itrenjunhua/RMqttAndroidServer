@@ -191,6 +191,8 @@ public class RMqttServer {
     public void unsubscribe(String[] topics) {
         try {
             client.unsubscribe(topics);
+            if (isDebug())
+                Log.e(TAG, "unsubscribe() => 取消订阅");
         } catch (MqttException e) {
             if (isDebug())
                 Log.e(TAG, "unsubscribe() => 取消订阅异常 : " + e);
@@ -205,6 +207,8 @@ public class RMqttServer {
     public void unsubscribe(String topic) {
         try {
             client.unsubscribe(topic);
+            if (isDebug())
+                Log.e(TAG, "unsubscribe() => 取消订阅");
         } catch (MqttException e) {
             if (isDebug())
                 Log.e(TAG, "unsubscribe() => 取消订阅异常 : " + e);

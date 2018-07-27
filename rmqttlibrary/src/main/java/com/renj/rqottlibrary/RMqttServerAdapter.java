@@ -26,7 +26,7 @@ public abstract class RMqttServerAdapter {
      * @param message 消息内容 {@link MqttMessage}
      * @throws Exception 异常
      */
-    abstract void messageArrived(String topic, MqttMessage message) throws Exception;
+    public abstract void messageArrived(String topic, MqttMessage message) throws Exception;
 
 
     /**

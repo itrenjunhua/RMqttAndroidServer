@@ -31,5 +31,7 @@ ext {
             // mqtt
             "mqttv3"                  : "org.eclipse.paho:org.eclipse.paho.client.mqttv3:${dependVersion.mqttv3}",
             "pahoAndroidService"      : "org.eclipse.paho:org.eclipse.paho.android.service:${dependVersion.pahoAndroidService}",
+            // mqtt操作库
+            "rmqttlibrary"            : ":rmqttlibrary",
     ]
 }

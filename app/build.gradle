@@ -31,4 +31,6 @@ dependencies {
     testImplementation rootProject.ext.dependencies["junitSupport"]
     androidTestImplementation rootProject.ext.dependencies["supportTestRunner"]
     androidTestImplementation rootProject.ext.dependencies["supportTestEspresso"]
+    // mqtt操作库
+    implementation project(rootProject.ext.dependencies["rmqttlibrary"])
 }
