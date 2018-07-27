@@ -1,17 +1,18 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion rootProject.ext.android.compileSdk
+    compileSdkVersion 27
 
-    // 默认配置
+
+
     defaultConfig {
-        applicationId rootProject.ext.android.applicationId
-        minSdkVersion rootProject.ext.android.minSdk
-        targetSdkVersion rootProject.ext.android.targetSdk
-        versionCode rootProject.ext.android.versionCode
-        versionName rootProject.ext.android.versionName
+        minSdkVersion 18
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
     }
 
     buildTypes {
@@ -20,6 +21,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
 }
 
 dependencies {
@@ -31,4 +33,7 @@ dependencies {
     testImplementation rootProject.ext.dependencies["junitSupport"]
     androidTestImplementation rootProject.ext.dependencies["supportTestRunner"]
     androidTestImplementation rootProject.ext.dependencies["supportTestEspresso"]
+    // mqtt
+    api rootProject.ext.dependencies["mqttv3"]
+    api rootProject.ext.dependencies["pahoAndroidService"]
 }
