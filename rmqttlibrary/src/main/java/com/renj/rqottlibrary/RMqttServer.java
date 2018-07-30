@@ -32,6 +32,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
  */
 public class RMqttServer {
     private final String TAG = RMqttServer.class.getName();
+    private int reConnectCount = 0;
     private MqttAndroidClient client;
     private MqttConnectOptions conOpt;
     private Builder builder;
@@ -113,8 +114,10 @@ public class RMqttServer {
             if (rMqttServiceAdapter != null)
                 rMqttServiceAdapter.onFailure(asyncActionToken, exception);
 
-            if (builder.autoReconnect)
+            if (builder.autoReconnect && reConnectCount < builder.autoReConnectCount) {
+                reConnectCount += 1;
                 connect();
+            }
         }
     };
 
