@@ -32,19 +32,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private RMqttServer rMqttServer;
 
-    String serverUrl = "tcp://dasApi.test.anlovek.com:1883";
-    String topic = "rjh_test";
-    int qo = 1;
-    String username = "dasServer";
-    String password = "Anlovek";
+    private String serverUrl = "tcp://156.23.4.8:1883";
     private String imei = "test_id";
-
-//    private String serverUrl = "tcp://156.23.4.8:1883";
-//    private String imei = "test_id";
-//    private String topic = "r_test";
-//    private int qo = 1;
-//    private String username = "your username";
-//    private String password = "your admin";
+    private String topic = "r_test";
+    private int qo = 1;
+    private String username = "your username";
+    private String password = "your admin";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
