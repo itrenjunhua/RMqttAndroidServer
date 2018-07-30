@@ -112,6 +112,9 @@ public class RMqttServer {
 
             if (rMqttServiceAdapter != null)
                 rMqttServiceAdapter.onFailure(asyncActionToken, exception);
+
+            if (builder.autoReconnect)
+                connect();
         }
     };
 
@@ -135,7 +138,7 @@ public class RMqttServer {
         // 连接参数
         conOpt = new MqttConnectOptions();
         // 清除缓存
-        conOpt.setCleanSession(builder.clearSession);
+        conOpt.setCleanSession(builder.cleanSession);
         // 设置超时时间，单位：秒
         conOpt.setConnectionTimeout(builder.timeOut);
         // 心跳包发送间隔，单位：秒
@@ -363,7 +366,7 @@ public class RMqttServer {
         private String clientId;
         private int timeOut = 10;
         private int keepAliveInterval = 20;
-        private boolean clearSession = false;
+        private boolean cleanSession = false;
         private boolean retained = false;
         private boolean autoConnect = true;
         private boolean autoReconnect = true;
@@ -371,6 +374,7 @@ public class RMqttServer {
         private int[] qos;
         private String topic;
         private int qo = -1;
+        private int autoReConnectCount = 5; // 连接失败自动重连次数
 
         /**
          * 配置服务器地址 格式：tcp://122.12.168.8:1883
@@ -461,6 +465,17 @@ public class RMqttServer {
         }
 
         /**
+         * 连接失败时，自动重新连接的次数。默认 5次
+         *
+         * @param autoReConnectCount 重新连接次数
+         * @return
+         */
+        public Builder autoReConnectCount(int autoReConnectCount) {
+            this.autoReConnectCount = autoReConnectCount;
+            return this;
+        }
+
+        /**
          * 配置服务器是否保存最后一条消息
          *
          * @param retained true：是 false：否
@@ -474,11 +489,11 @@ public class RMqttServer {
         /**
          * 配置是否清除缓存
          *
-         * @param clearSession true：是 false：否
+         * @param cleanSession true：是 false：否
          * @return
          */
-        public Builder clearSession(boolean clearSession) {
-            this.clearSession = clearSession;
+        public Builder cleanSession(boolean cleanSession) {
+            this.cleanSession = cleanSession;
             return this;
         }
 

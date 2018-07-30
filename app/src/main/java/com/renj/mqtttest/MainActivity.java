@@ -32,12 +32,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private RMqttServer rMqttServer;
 
-    private String serverUrl = "tcp://156.23.4.8:1883";
+    String serverUrl = "tcp://dasApi.test.anlovek.com:1883";
+    String topic = "rjh_test";
+    int qo = 1;
+    String username = "dasServer";
+    String password = "Anlovek";
     private String imei = "test_id";
-    private String topic = "r_test";
-    private int qo = 1;
-    private String username = "your username";
-    private String password = "your admin";
+
+//    private String serverUrl = "tcp://156.23.4.8:1883";
+//    private String imei = "test_id";
+//    private String topic = "r_test";
+//    private int qo = 1;
+//    private String username = "your username";
+//    private String password = "your admin";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 // 设置自动重连
                 .autoReconnect(true)
                 // 设置不清除回话session 可收到服务器之前发出的推送消息
-                .clearSession(false)
+                .cleanSession(false)
                 // 唯一标识
                 .clientId(imei)
                 // 用户名、密码
