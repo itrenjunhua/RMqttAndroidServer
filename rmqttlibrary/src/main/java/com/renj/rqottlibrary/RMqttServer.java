@@ -91,13 +91,19 @@ public class RMqttServer {
             if (builder.topics != null && builder.topics.length > 0
                     && builder.qos != null && builder.qos.length > 0) {
 
-                if (isDebug())
-                    Log.v(TAG, "subscribe() => 自动订阅主题 " + asyncActionToken.getTopics());
+                if (isDebug()) {
+                    String topics = "[";
+                    for (String topic : builder.topics) {
+                        topics += topic + " ";
+                    }
+                    topics += "]";
+                    Log.v(TAG, "subscribe() => 自动订阅主题 " + topics);
+                }
 
                 subscribe(builder.topics, builder.qos);
             } else if (!TextUtils.isEmpty(builder.topic) && builder.qo > -1) {
                 if (isDebug())
-                    Log.v(TAG, "subscribe() => 自动订阅主题 " + asyncActionToken.getTopics());
+                    Log.v(TAG, "subscribe() => 自动订阅主题 " + builder.topic);
 
                 subscribe(builder.topic, builder.qo);
             }
@@ -167,6 +173,15 @@ public class RMqttServer {
         try {
             // 订阅topic话题
             client.subscribe(topics, qos);
+
+            if (isDebug()) {
+                String temp = "[";
+                for (String topic : builder.topics) {
+                    temp += topic + " ";
+                }
+                temp += "]";
+                Log.v(TAG, "subscribe() => 订阅主题 " + temp);
+            }
         } catch (Exception e) {
             if (isDebug())
                 Log.e(TAG, "subscribe() => 订阅异常 : " + e);
@@ -183,6 +198,9 @@ public class RMqttServer {
         try {
             // 订阅topic话题
             client.subscribe(topic, qos);
+
+            if (isDebug())
+                Log.v(TAG, "subscribe() => 订阅主题 " + builder.topic);
         } catch (Exception e) {
             if (isDebug())
                 Log.e(TAG, "subscribe() => 订阅异常 : " + e);
