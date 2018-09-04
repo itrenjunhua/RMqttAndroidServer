@@ -5,7 +5,7 @@
 
 库，进行封装；链式调用，使用简单。
 
-# 使用
+# 使用（常用方法）
 
 ### 1.定义变量
     private String serverUrl = "tcp://156.23.4.8:1883";
@@ -66,7 +66,7 @@
     rMqttServer.disconnect(); // 断开连接
     rMqttServer.close();      // 关闭客户端
     
-### 8.相关监听(可选择行重写)
+## 相关监听(可选择行重写)
     public abstract class RMqttServerAdapter {
         /**
          * 接收到消息，返回消息为 {@link MqttMessage} 对象
