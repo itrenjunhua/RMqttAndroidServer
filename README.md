@@ -59,14 +59,14 @@
   ### 5.订阅主题
     rMqttServer.subscribe(topic, 1);
     
-   ### 6.手动建立连接(在初始化方法中必须指定策略和主题)
+   ### 6.手动建立连接(使用在初始化方法中指定的策略和主题)
      rMqttServer.connect();
      
   ### 7.断开连接、关闭客户端
     rMqttServer.disconnect(); // 断开连接
     rMqttServer.close();      // 关闭客户端
     
-## 相关监听(可选择行重写)
+## 相关监听(可选择性重写)
     public abstract class RMqttServerAdapter {
         /**
          * 接收到消息，返回消息为 {@link MqttMessage} 对象
