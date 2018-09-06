@@ -2,6 +2,8 @@ package com.renj.rqottlibrary;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
@@ -32,6 +34,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
  */
 public class RMqttServer {
     private final String TAG = RMqttServer.class.getName();
+    private Handler handler = new Handler(Looper.getMainLooper());
     private int reConnectCount = 0;
     private MqttAndroidClient client;
     private MqttConnectOptions conOpt;
@@ -120,9 +123,26 @@ public class RMqttServer {
             if (rMqttServiceAdapter != null)
                 rMqttServiceAdapter.onFailure(asyncActionToken, exception);
 
-            if (builder.autoReconnect && reConnectCount < builder.autoReConnectCount) {
-                reConnectCount += 1;
-                connect();
+            if (builder.autoReconnect) {
+
+                // 如果 autoReConnectCount 的值为 -1 表示无限重连，那么每次重连时都将 reConnectCount 的值设置为 -5 实现无限重连
+                if (builder.autoReConnectCount == -1) reConnectCount = -5;
+
+                if (reConnectCount < builder.autoReConnectCount) {
+                    // 判断重连时间间隔
+                    if (builder.autoReConnectionInterval == 0) {
+                        reConnectCount += 1;
+                        connect();
+                    } else {
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                reConnectCount += 1;
+                                connect();
+                            }
+                        }, builder.autoReConnectionInterval * 1000);
+                    }
+                }
             }
         }
     };
@@ -386,7 +406,7 @@ public class RMqttServer {
         private String passWord = "";
         private String clientId;
         private int timeOut = 10;
-        private int keepAliveInterval = 20;
+        private int keepAliveInterval = 20; // 心跳包发送时间间隔，单位 秒
         private boolean cleanSession = false;
         private boolean retained = false;
         private boolean autoConnect = true;
@@ -395,7 +415,8 @@ public class RMqttServer {
         private int[] qos;
         private String topic;
         private int qo = -1;
-        private int autoReConnectCount = 5; // 连接失败自动重连次数
+        private int autoReConnectionInterval = 20; // 自动重连间隔时间，单位 秒
+        private int autoReConnectCount = 5; // 连接失败自动重连次数，-1 表示无限重连
 
         /**
          * 配置服务器地址 格式：tcp://122.12.168.8:1883
@@ -442,29 +463,29 @@ public class RMqttServer {
         }
 
         /**
-         * 配置超时时间，单位：秒
+         * 配置超时时间，单位：秒  默认 10 秒
          *
          * @param timeOut 超时时间，单位：秒
          * @return
          */
-        public Builder timeOut(int timeOut) {
+        public Builder timeOut(@IntRange(from = 1) int timeOut) {
             this.timeOut = timeOut;
             return this;
         }
 
         /**
-         * 配置心跳包发送间隔，单位：秒
+         * 配置心跳包发送间隔，单位：秒  默认 20 秒
          *
          * @param keepAliveInterval 心跳包发送间隔，单位：秒
          * @return
          */
-        public Builder keepAliveInterval(int keepAliveInterval) {
+        public Builder keepAliveInterval(@IntRange(from = 1) int keepAliveInterval) {
             this.keepAliveInterval = keepAliveInterval;
             return this;
         }
 
         /**
-         * 是否自动连接到服务器
+         * 是否自动连接到服务器，默认自动连接
          *
          * @param autoConnect true：自动连接 false：不自动连接
          * @return
@@ -475,7 +496,7 @@ public class RMqttServer {
         }
 
         /**
-         * 配置是否设置自动重连
+         * 配置是否设置自动重连，默认自动重连 5 次，可以通过 {@link #autoReConnectCount(int)} 方法指定次数
          *
          * @param autoReconnect true：自动重连 false：不自动重连
          * @return
@@ -486,18 +507,29 @@ public class RMqttServer {
         }
 
         /**
-         * 连接失败时，自动重新连接的次数。默认 5次
+         * 连接失败时，自动重新连接的次数。默认 5次，<b>-1 表示无限重连</b>
          *
          * @param autoReConnectCount 重新连接次数
          * @return
          */
-        public Builder autoReConnectCount(int autoReConnectCount) {
+        public Builder autoReConnectCount(@IntRange(from = -1) int autoReConnectCount) {
             this.autoReConnectCount = autoReConnectCount;
             return this;
         }
 
         /**
-         * 配置服务器是否保存最后一条消息
+         * 自动重连间隔时间，单位：秒  默认 20 秒；前提：能自动重连 可以通过 {@link #autoReConnectCount(int)} 方法设置重连次数
+         *
+         * @param autoReConnectionInterval 自动重连间隔时间 ，单位：秒
+         * @return
+         */
+        public Builder autoReConnectionInterval(@IntRange(from = 0) int autoReConnectionInterval) {
+            this.autoReConnectionInterval = autoReConnectionInterval;
+            return this;
+        }
+
+        /**
+         * 配置服务器是否保存最后一条消息，默认 false
          *
          * @param retained true：是 false：否
          * @return
@@ -508,7 +540,7 @@ public class RMqttServer {
         }
 
         /**
-         * 配置是否清除缓存
+         * 配置是否清除缓存，默认 false
          *
          * @param cleanSession true：是 false：否
          * @return

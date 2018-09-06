@@ -26,6 +26,10 @@
             .topic(topic, qo)
             // 设置自动重连
             .autoReconnect(true)
+             // 设置自动重连次数，-1 表示无限重连
+            .autoReConnectCount(5)
+            // 设置自动重连时间间隔 秒
+            .autoReConnectionInterval(10)
             // 设置不清除回话session 可收到服务器之前发出的推送消息
             .cleanSession(false)
             // 唯一标识
@@ -33,7 +37,7 @@
             // 用户名、密码
             .userName(username)
             .passWord(password)
-            // 心跳包默认的发送间隔
+            // 心跳包默认的发送间隔 秒
             .keepAliveInterval(20)
             // 构建出RMqttServer 建议用application的context
             .build(this.getApplicationContext());
