@@ -58,7 +58,7 @@ public class RMqttServer {
         @Override
         public void connectionLost(Throwable cause) {
             if (isDebug())
-                Log.w(TAG, "connectionLost() => 连接断开");
+                Log.w(TAG, "connectionLost() => 连接断开 " + cause);
             if (rMqttServiceAdapter != null)
                 rMqttServiceAdapter.connectionLost(cause);
         }
@@ -66,7 +66,7 @@ public class RMqttServer {
         @Override
         public void messageArrived(String topic, MqttMessage message) throws Exception {
             if (isDebug())
-                Log.i(TAG, "messageArrived() => 接收到消息");
+                Log.i(TAG, "messageArrived() => 主题 " + topic + " 接收到消息");
             if (rMqttServiceAdapter != null)
                 rMqttServiceAdapter.messageArrived(topic, message);
         }
@@ -74,7 +74,7 @@ public class RMqttServer {
         @Override
         public void deliveryComplete(IMqttDeliveryToken token) {
             if (isDebug())
-                Log.v(TAG, "deliveryComplete() => 传送完成");
+                Log.v(TAG, "deliveryComplete() => 客户端 " + token.getClient().getClientId() + " 传送完成");
             if (rMqttServiceAdapter != null)
                 rMqttServiceAdapter.deliveryComplete(token);
         }
@@ -88,14 +88,14 @@ public class RMqttServer {
         @Override
         public void onSuccess(IMqttToken asyncActionToken) {
             if (isDebug())
-                Log.v(TAG, "onSuccess() => 连接成功");
+                Log.v(TAG, "onSuccess() => 客户端 " + asyncActionToken.getClient().getClientId() + " 连接成功");
 
             // 如果在 Builder 中配置了 主题和策略 那么这里将自动订阅
             if (builder.topics != null && builder.topics.length > 0
                     && builder.qos != null && builder.qos.length > 0) {
 
                 if (isDebug()) {
-                    String topics = "[";
+                    String topics = "[ ";
                     for (String topic : builder.topics) {
                         topics += topic + " ";
                     }
@@ -195,16 +195,22 @@ public class RMqttServer {
             client.subscribe(topics, qos);
 
             if (isDebug()) {
-                String temp = "[";
-                for (String topic : builder.topics) {
+                String temp = "[ ";
+                for (String topic : topics) {
                     temp += topic + " ";
                 }
                 temp += "]";
                 Log.v(TAG, "subscribe() => 订阅主题 " + temp);
             }
         } catch (Exception e) {
-            if (isDebug())
-                Log.e(TAG, "subscribe() => 订阅异常 : " + e);
+            if (isDebug()) {
+                String temp = "[ ";
+                for (String topic : topics) {
+                    temp += topic + " ";
+                }
+                temp += "]";
+                Log.e(TAG, "subscribe() => 订阅主题 " + temp + "异常 : " + e);
+            }
         }
     }
 
@@ -220,10 +226,10 @@ public class RMqttServer {
             client.subscribe(topic, qos);
 
             if (isDebug())
-                Log.v(TAG, "subscribe() => 订阅主题 " + builder.topic);
+                Log.v(TAG, "subscribe() => 订阅主题 " + topic);
         } catch (Exception e) {
             if (isDebug())
-                Log.e(TAG, "subscribe() => 订阅异常 : " + e);
+                Log.e(TAG, "subscribe() => 订阅主题 " + topic + " 异常 : " + e);
         }
     }
 
@@ -235,11 +241,23 @@ public class RMqttServer {
     public void unsubscribe(String[] topics) {
         try {
             client.unsubscribe(topics);
-            if (isDebug())
-                Log.e(TAG, "unsubscribe() => 取消订阅");
+            if (isDebug()) {
+                String temp = "[ ";
+                for (String topic : topics) {
+                    temp += topic + " ";
+                }
+                temp += "]";
+                Log.e(TAG, "unsubscribe() => 取消订阅 " + temp);
+            }
         } catch (MqttException e) {
-            if (isDebug())
-                Log.e(TAG, "unsubscribe() => 取消订阅异常 : " + e);
+            if (isDebug()) {
+                String temp = "[ ";
+                for (String topic : topics) {
+                    temp += topic + " ";
+                }
+                temp += "]";
+                Log.e(TAG, "unsubscribe() => 取消订阅 " + temp + " 异常 : " + e);
+            }
         }
     }
 
@@ -252,10 +270,10 @@ public class RMqttServer {
         try {
             client.unsubscribe(topic);
             if (isDebug())
-                Log.e(TAG, "unsubscribe() => 取消订阅");
+                Log.e(TAG, "unsubscribe() => 取消订阅 " + topic);
         } catch (MqttException e) {
             if (isDebug())
-                Log.e(TAG, "unsubscribe() => 取消订阅异常 : " + e);
+                Log.e(TAG, "unsubscribe() => 取消订阅 " + topic + " 异常 : " + e);
         }
     }
 
@@ -331,7 +349,7 @@ public class RMqttServer {
         if (!isConnected()) {
             try {
                 if (isDebug())
-                    Log.v(TAG, "connect() => 连接服务器...");
+                    Log.v(TAG, "connect() => 开始连接服务器...");
                 client.connect(conOpt, null, iMqttActionListener);
             } catch (Exception e) {
                 if (isDebug())
